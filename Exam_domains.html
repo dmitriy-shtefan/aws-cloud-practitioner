@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AWS Certified Cloud Practitioner exam domains and learning objectives.">
+  <title>AWS Cloud Practitioner — Exam Domains</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5d6679;
+      --paper: #ffffff;
+      --line: #dfe4ec;
+      --navy: #17233f;
+      --orange: #ff9900;
+      --orange-soft: #fff2d6;
+      --blue: #2274a5;
+      --teal: #1f8a70;
+      --purple: #7356bf;
+      --rose: #c75268;
+      --shadow: 0 18px 48px rgba(23, 32, 51, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 0%, rgba(255, 153, 0, 0.15), transparent 30rem),
+        linear-gradient(180deg, #f7f9fc 0%, #eef2f7 100%);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 40px auto;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(32px, 6vw, 68px);
+      border-radius: 26px;
+      background: var(--navy);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      right: -100px;
+      top: -150px;
+      border: 46px solid rgba(255, 153, 0, 0.22);
+      border-radius: 50%;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      color: #ffd58f;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 30px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--orange);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(2.15rem, 5.5vw, 4.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 20px 0 0;
+      color: #cbd5e5;
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .panel {
+      padding: 28px;
+      border: 1px solid rgba(223, 228, 236, 0.9);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 10px 30px rgba(23, 32, 51, 0.06);
+    }
+
+    .panel h2 {
+      margin: 0 0 20px;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .weight-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 44px;
+      gap: 14px;
+      align-items: center;
+      margin: 14px 0;
+      font-size: 0.9rem;
+    }
+
+    .weight-row strong:last-child { text-align: right; }
+
+    .track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9edf3;
+    }
+
+    .track span {
+      display: block;
+      width: var(--weight);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .total {
+      display: grid;
+      place-items: center;
+      min-height: 100%;
+      text-align: center;
+    }
+
+    .total-number {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(4rem, 8vw, 6.4rem);
+      font-weight: 850;
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    .total-number span {
+      color: var(--orange);
+      font-size: 0.46em;
+      letter-spacing: -0.02em;
+    }
+
+    .total p { margin: 14px 0 0; color: var(--muted); }
+
+    .domains {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .domain {
+      --accent: var(--blue);
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-top: 6px solid var(--accent);
+      border-radius: 20px;
+      background: var(--paper);
+      box-shadow: 0 10px 30px rgba(23, 32, 51, 0.06);
+    }
+
+    .domain:nth-child(2) { --accent: var(--teal); }
+    .domain:nth-child(3) { --accent: var(--purple); }
+    .domain:nth-child(4) { --accent: var(--rose); }
+
+    .domain-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .domain-kicker {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 850;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .domain h2 {
+      margin: 0;
+      font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      min-width: 68px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--accent) 12%, white);
+      color: var(--accent);
+      font-size: 1.15rem;
+      font-weight: 850;
+      text-align: center;
+    }
+
+    ul {
+      display: grid;
+      gap: 13px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      position: relative;
+      padding-left: 26px;
+      color: #3f485a;
+    }
+
+    li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0.05em;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    footer {
+      margin-top: 24px;
+      padding: 22px 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .page { margin: 16px auto; }
+      .overview, .domains { grid-template-columns: 1fr; }
+      .hero, .panel, .domain { border-radius: 16px; }
+      .weight-row { grid-template-columns: 94px 1fr 40px; gap: 10px; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 12mm; }
+      body { background: white; }
+      .page { width: 100%; margin: 0; }
+      .hero, .panel, .domain { box-shadow: none; }
+      .hero { padding: 34px; }
+      .overview { grid-template-columns: 1.45fr 0.55fr; }
+      .domains { gap: 14px; }
+      .domain { padding: 20px; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="eyebrow">Certification study guide</p>
+      <h1>AWS Cloud Practitioner Exam Domains</h1>
+      <p>A concise overview of the four exam domains, their relative weighting, and the knowledge expected in each area.</p>
+    </header>
+
+    <section class="overview" aria-label="Exam weighting overview">
+      <div class="panel">
+        <h2>Exam weight by domain</h2>
+        <div class="weight-row" style="--accent: var(--blue); --weight: 24%;">
+          <strong>Concepts</strong><div class="track"><span></span></div><strong>24%</strong>
+        </div>
+        <div class="weight-row" style="--accent: var(--teal); --weight: 30%;">
+          <strong>Security</strong><div class="track"><span></span></div><strong>30%</strong>
+        </div>
+        <div class="weight-row" style="--accent: var(--purple); --weight: 34%;">
+          <strong>Technology</strong><div class="track"><span></span></div><strong>34%</strong>
+        </div>
+        <div class="weight-row" style="--accent: var(--rose); --weight: 12%;">
+          <strong>Billing</strong><div class="track"><span></span></div><strong>12%</strong>
+        </div>
+      </div>
+      <div class="panel total">
+        <div>
+          <p class="total-number">4<span> domains</span></p>
+          <p>Together accounting for 100% of the exam.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="domains" aria-label="Detailed exam domains">
+      <article class="domain">
+        <div class="domain-header">
+          <div>
+            <p class="domain-kicker">Domain 1</p>
+            <h2>Cloud Concepts</h2>
+          </div>
+          <div class="badge" aria-label="24 percent of exam">24%</div>
+        </div>
+        <ul>
+          <li>Define and explain the benefits of cloud computing, including elasticity, scalability, and agility.</li>
+          <li>Understand the AWS Cloud value proposition and its economic benefits.</li>
+          <li>Compare public, private, and hybrid cloud deployment models.</li>
+          <li>Identify the basic global infrastructure of the AWS Cloud.</li>
+          <li>Describe key concepts such as high availability and fault tolerance.</li>
+        </ul>
+      </article>
+
+      <article class="domain">
+        <div class="domain-header">
+          <div>
+            <p class="domain-kicker">Domain 2</p>
+            <h2>Security and Compliance</h2>
+          </div>
+          <div class="badge" aria-label="30 percent of exam">30%</div>
+        </div>
+        <ul>
+          <li>Understand the AWS Shared Responsibility Model.</li>
+          <li>Understand access management through IAM roles, users, and groups.</li>
+          <li>Recognize security services such as AWS WAF, Shield, Security Hub, Macie, and GuardDuty.</li>
+          <li>Understand data protection mechanisms, including encryption and key management.</li>
+          <li>Identify AWS compliance programs and understand how AWS Artifact is used.</li>
+        </ul>
+      </article>
+
+      <article class="domain">
+        <div class="domain-header">
+          <div>
+            <p class="domain-kicker">Domain 3</p>
+            <h2>Cloud Technology and Services</h2>
+          </div>
+          <div class="badge" aria-label="34 percent of exam">34%</div>
+        </div>
+        <ul>
+          <li>Describe the basic functions of core services, including Amazon EC2, Amazon S3, Amazon RDS, and AWS Lambda.</li>
+          <li>Understand AWS global infrastructure: Regions, Availability Zones, and Edge Locations.</li>
+          <li>Differentiate between compute, storage, database, and networking services.</li>
+          <li>Understand the concepts of containers and serverless computing.</li>
+          <li>Identify AWS service categories and their common use cases.</li>
+        </ul>
+      </article>
+
+      <article class="domain">
+        <div class="domain-header">
+          <div>
+            <p class="domain-kicker">Domain 4</p>
+            <h2>Billing, Pricing, and Support</h2>
+          </div>
+          <div class="badge" aria-label="12 percent of exam">12%</div>
+        </div>
+        <ul>
+          <li>Understand AWS pricing models, including On-Demand, Reserved, and Spot Instances.</li>
+          <li>Identify key billing and cost management tools such as AWS Cost Explorer and AWS Budgets.</li>
+          <li>Explain the AWS Free Tier and how to track usage.</li>
+          <li>Understand the features of AWS Support Plans.</li>
+          <li>Recognize AWS Marketplace and its role in procurement.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer>AWS Cloud Practitioner • Exam domain reference</footer>
+  </main>
+</body>
+</html>
