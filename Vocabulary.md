@@ -1,9 +1,12 @@
 Словник.
 https://context.reverso.net/
 
-1. Benefit - 
-2. Foster - 
-3. Imply - 
-4. Allow - 
-5. Apply -
-6. Relevant / Irrelevant -
+1. Benefit - перевага, вигода, користь
+2. Foster - сприяти, заохочувати, розвивати
+3. Imply - передбачати, мати на увазі, означати
+4. Allow - дозволяти, давати змогу
+5. Apply - застосовувати
+6. Relevant / Irrelevant - відповідний / невідповідний
+7. Application - застосунок, додаток; в IT часто ширше: програмний застосунок / система
+8. Varying - змінний, такий, що змінюється
+9. Compute requerements - вимоги до обчислювальних ресурсів
