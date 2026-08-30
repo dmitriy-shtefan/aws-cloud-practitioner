@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Інтерактивна презентація про Amazon EC2 для AWS Cloud Practitioner">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='13' y='13' width='38' height='38' rx='9' fill='%23ff9900'/><path d='M23 25h18v14H23z' fill='%230b1728'/></svg>">
+  <title>Amazon EC2 — інтерактивна презентація</title>
+  <style>
+    :root {
+      --navy-950: #07111f;
+      --navy-900: #0b1728;
+      --navy-800: #12243b;
+      --navy-700: #1d3552;
+      --ink: #f7f9fc;
+      --muted: #afbed0;
+      --orange: #ff9900;
+      --orange-soft: #ffd08a;
+      --cyan: #50d4e8;
+      --green: #60d394;
+      --red: #ff7b7b;
+      --line: rgba(255, 255, 255, 0.14);
+      --panel: rgba(18, 36, 59, 0.84);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--navy-950);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100svh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(80, 212, 232, 0.12), transparent 30%),
+        radial-gradient(circle at 88% 82%, rgba(255, 153, 0, 0.15), transparent 28%),
+        linear-gradient(145deg, var(--navy-950), var(--navy-900));
+    }
+
+    button { font: inherit; }
+    strong { color: var(--ink); }
+
+    .deck {
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .deck::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 18px clamp(18px, 4vw, 56px) 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      background: var(--orange);
+      box-shadow: 0 0 22px rgba(255,153,0,.72);
+      transform: rotate(12deg);
+    }
+
+    .progress {
+      height: 4px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: rgba(255,255,255,.09);
+    }
+
+    .progress-fill {
+      width: 12.5%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange), var(--cyan));
+      transition: width .35s ease;
+    }
+
+    .slide-count {
+      min-width: 58px;
+      color: var(--muted);
+      text-align: right;
+      font-size: .82rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stage {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 8px clamp(18px, 5vw, 72px);
+    }
+
+    .slide {
+      display: none;
+      width: min(1160px, 100%);
+      max-height: calc(100svh - 148px);
+      overflow: auto;
+      padding: clamp(10px, 2vw, 20px) 4px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--navy-700) transparent;
+    }
+
+    .slide.active {
+      display: block;
+      animation: slide-in .42s cubic-bezier(.2,.75,.2,1);
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--orange-soft);
+      font-size: .77rem;
+      font-weight: 850;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 950px;
+      margin-bottom: 20px;
+      font-size: clamp(2.65rem, 6vw, 5.6rem);
+      line-height: .98;
+      letter-spacing: -.055em;
+    }
+
+    h2 {
+      max-width: 1000px;
+      margin-bottom: 22px;
+      font-size: clamp(2rem, 4vw, 3.9rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      letter-spacing: -.01em;
+    }
+
+    .lead {
+      max-width: 880px;
+      margin-bottom: 26px;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.7vw, 1.25rem);
+      line-height: 1.55;
+    }
+
+    .accent { color: var(--orange); }
+    .cyan { color: var(--cyan); }
+
+    .panel {
+      padding: clamp(18px, 2.4vw, 28px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel.orange-edge { border-top: 3px solid var(--orange); }
+    .panel.cyan-edge { border-top: 3px solid var(--cyan); }
+    .panel p { margin-bottom: 0; color: var(--muted); line-height: 1.5; }
+
+    .formula {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .formula-part {
+      min-height: 158px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(29,53,82,.9), rgba(11,23,40,.94));
+      box-shadow: var(--shadow);
+    }
+
+    .formula-symbol {
+      color: var(--orange);
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .step-no {
+      color: var(--cyan);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .formula-part strong {
+      font-size: clamp(1.25rem, 2vw, 1.7rem);
+      letter-spacing: -.03em;
+    }
+
+    .formula-part small { color: var(--muted); line-height: 1.4; }
+
+    .memory-line {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-left: 3px solid var(--orange);
+      color: var(--muted);
+      background: rgba(255,153,0,.08);
+      line-height: 1.45;
+    }
+
+    .flip-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .flip-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .flip-card {
+      min-height: 188px;
+      padding: 0;
+      border: 0;
+      border-radius: 20px;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      background: transparent;
+      perspective: 900px;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 188px;
+      transition: transform .55s cubic-bezier(.2,.8,.2,1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      backface-visibility: hidden;
+      background: linear-gradient(145deg, rgba(29,53,82,.98), rgba(11,23,40,.98));
+      box-shadow: 0 15px 36px rgba(0,0,0,.2);
+    }
+
+    .flip-back {
+      border-color: rgba(255,153,0,.55);
+      transform: rotateY(180deg);
+      background: linear-gradient(145deg, rgba(80,48,18,.98), rgba(20,27,38,.98));
+    }
+
+    .flip-kicker {
+      color: var(--cyan);
+      font-size: .72rem;
+      font-weight: 850;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .flip-term {
+      font-size: clamp(1.03rem, 1.8vw, 1.35rem);
+      font-weight: 820;
+      line-height: 1.2;
+    }
+
+    .flip-hint { color: var(--muted); font-size: .78rem; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.35fr .85fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .family-list { display: grid; gap: 7px; }
+
+    .family-row {
+      display: grid;
+      grid-template-columns: 42px 155px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .family-row:last-child { border-bottom: 0; }
+
+    .family-letter {
+      color: var(--orange);
+      font-size: 1.75rem;
+      font-weight: 900;
+    }
+
+    .family-name { font-weight: 820; }
+    .family-use { color: var(--muted); font-size: .9rem; }
+
+    .storage-stack { display: grid; gap: 14px; }
+
+    .storage-fact {
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .storage-fact:last-child { padding-bottom: 0; border-bottom: 0; }
+    .storage-fact span { display: block; margin-bottom: 3px; color: var(--cyan); font-weight: 850; }
+    .storage-fact p { font-size: .92rem; }
+
+    .quiz-shell {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .quiz-card {
+      min-height: 355px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .quiz-question { display: none; }
+    .quiz-question.active { display: block; animation: fade .25s ease; }
+    @keyframes fade { from { opacity: .25; } to { opacity: 1; } }
+
+    .question-title {
+      min-height: 58px;
+      margin-bottom: 18px;
+      font-size: clamp(1.08rem, 2vw, 1.38rem);
+      font-weight: 790;
+      line-height: 1.4;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .answer {
+      min-height: 58px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--ink);
+      text-align: left;
+      line-height: 1.3;
+      cursor: pointer;
+      background: rgba(7,17,31,.58);
+      transition: border-color .18s, background .18s, transform .18s;
+    }
+
+    .answer:hover:not(:disabled) { border-color: var(--cyan); transform: translateY(-1px); }
+    .answer.correct { border-color: var(--green); background: rgba(96,211,148,.15); }
+    .answer.wrong { border-color: var(--red); background: rgba(255,123,123,.14); }
+    .answer:disabled { cursor: default; }
+
+    .feedback {
+      display: none;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.4;
+    }
+
+    .feedback.show { display: block; }
+
+    .quiz-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .quiz-position { color: var(--muted); font-size: .86rem; font-variant-numeric: tabular-nums; }
+
+    .quiz-nav { display: flex; gap: 8px; }
+
+    .mini-button, .reset-button {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink);
+      cursor: pointer;
+      background: rgba(7,17,31,.42);
+    }
+
+    .mini-button:disabled { opacity: .35; cursor: default; }
+
+    .quiz-rail {
+      width: 88px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: rgba(7,17,31,.48);
+    }
+
+    .rail-number { color: var(--orange); font-size: 2.5rem; font-weight: 900; line-height: 1; }
+    .rail-label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
+
+    .security-layout {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+    }
+
+    .access-flow { display: grid; gap: 14px; }
+
+    .access-item {
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .access-item:last-child { padding-bottom: 0; border-bottom: 0; }
+    .access-item strong { display: block; margin-bottom: 4px; font-size: 1.05rem; }
+    .access-item p { font-size: .9rem; }
+
+    .lifecycle {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 18px 0;
+    }
+
+    .state {
+      min-height: 105px;
+      padding: 14px;
+      border-top: 3px solid var(--cyan);
+      border-radius: 14px;
+      background: rgba(7,17,31,.5);
+    }
+
+    .state.danger { border-top-color: var(--red); }
+    .state strong { display: block; margin-bottom: 5px; }
+    .state small { color: var(--muted); line-height: 1.35; }
+
+    .decision-tree { display: grid; gap: 10px; }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 1.2fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .decision-row:last-child { border-bottom: 0; }
+    .decision-question { color: var(--muted); }
+    .decision-arrow { color: var(--cyan); font-size: 1.25rem; }
+    .decision-answer { font-size: 1.08rem; font-weight: 850; }
+
+    .discounts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .discount {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(7,17,31,.45);
+    }
+
+    .discount strong { display: block; color: var(--orange); font-size: 1.3rem; }
+
+    .scoreboard {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 14px;
+      padding: 13px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(7,17,31,.55);
+    }
+
+    .score-value { font-size: 1.02rem; font-weight: 800; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 8px clamp(18px, 4vw, 56px) 18px;
+    }
+
+    .nav-button, .fullscreen {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--ink);
+      cursor: pointer;
+      background: rgba(18,36,59,.84);
+      transition: background .18s, border-color .18s, transform .18s;
+    }
+
+    .nav-button {
+      gap: 8px;
+      width: max-content;
+      padding: 0 18px;
+      font-weight: 760;
+    }
+
+    .nav-button:last-child { justify-self: end; }
+    .nav-button:hover:not(:disabled), .fullscreen:hover, .mini-button:hover:not(:disabled), .reset-button:hover { border-color: var(--orange); }
+    .nav-button:active, .fullscreen:active { transform: scale(.98); }
+    .nav-button:disabled { opacity: .35; cursor: default; }
+
+    .fullscreen { width: 44px; padding: 0; color: var(--muted); }
+
+    .keyboard-hint {
+      position: fixed;
+      right: 18px;
+      bottom: 74px;
+      color: rgba(175,190,208,.55);
+      font-size: .72rem;
+      pointer-events: none;
+    }
+
+    .answer:focus-visible, .nav-button:focus-visible, .flip-card:focus-visible,
+    .fullscreen:focus-visible, .reset-button:focus-visible, .mini-button:focus-visible {
+      outline: 3px solid var(--cyan);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 850px) {
+      body { overflow: auto; }
+      .deck { min-height: 100svh; }
+      .slide { max-height: none; }
+      .formula, .split, .security-layout, .quiz-shell { grid-template-columns: 1fr; }
+      .formula-symbol { display: none; }
+      .flip-grid, .flip-grid.four, .answers, .discounts { grid-template-columns: 1fr; }
+      .quiz-rail { display: none; }
+      .family-row { grid-template-columns: 42px 130px 1fr; }
+      .lifecycle { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .decision-row { grid-template-columns: 1fr auto; }
+      .decision-answer { grid-column: 1 / -1; }
+      .keyboard-hint { display: none; }
+      .brand span:last-child { display: none; }
+    }
+
+    @media (max-height: 760px) and (min-width: 851px) {
+      h1 { font-size: clamp(2.2rem, 5vw, 4rem); }
+      h2 { font-size: clamp(1.8rem, 3.4vw, 3rem); margin-bottom: 15px; }
+      .lead { margin-bottom: 16px; }
+      .panel { padding: 17px; }
+      .formula-part { min-height: 130px; padding: 17px; }
+      .flip-card, .flip-card-inner { min-height: 156px; }
+      .quiz-card { min-height: 310px; }
+      .answer { min-height: 48px; padding: 8px 11px; }
+      .lifecycle { margin: 12px 0; }
+      .state { min-height: 84px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
+    @media print {
+      body { overflow: visible; background: #fff; color: #111; }
+      .topbar, .controls, .keyboard-hint { display: none; }
+      .slide, .slide.active { display: block; max-height: none; min-height: 100vh; break-after: page; }
+      .panel, .formula-part, .flip-face, .quiz-rail, .answer { color: #111; background: #fff; box-shadow: none; border-color: #aaa; }
+      .panel p, .lead, .feedback, .family-use, .decision-question { color: #333; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="Інтерактивна презентація Amazon EC2">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>AWS Cloud Practitioner · EC2</span></div>
+      <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+      <div class="slide-count" aria-live="polite">01 / 08</div>
+    </header>
+
+    <div class="stage">
+      <section class="slide active" data-kind="learn" aria-labelledby="s1-title">
+        <p class="eyebrow">01 · Ментальна модель</p>
+        <h1 id="s1-title">EC2 — віртуальний сервер <span class="accent">під вашим контролем</span></h1>
+        <p class="lead">AWS надає обчислення, а ви обираєте образ, «залізо», диск, доступ і модель оплати.</p>
+        <div class="formula" aria-label="Формула інстансу EC2">
+          <article class="formula-part"><span class="step-no">01 · Шаблон</span><strong>AMI</strong><small>ОС, програми та налаштування</small></article>
+          <div class="formula-symbol">+</div>
+          <article class="formula-part"><span class="step-no">02 · Потужність</span><strong>Instance type</strong><small>Сімейство за задачею + розмір</small></article>
+          <div class="formula-symbol">+</div>
+          <article class="formula-part"><span class="step-no">03 · Дані і доступ</span><strong>EBS + Security Group</strong><small>Постійний диск + віртуальний фаєрвол</small></article>
+        </div>
+        <div class="memory-line"><strong>Instance</strong> — запущена віртуальна машина. За замовчуванням вона працює в моделі <strong>shared tenancy</strong>.</div>
+      </section>
+
+      <section class="slide" data-kind="check" aria-labelledby="s2-title">
+        <p class="eyebrow">02 · Перевірка · Flip-cards</p>
+        <h2 id="s2-title">Три деталі, які легко <span class="accent">переплутати</span></h2>
+        <p class="lead">Сформулюйте відповідь, потім натисніть картку.</p>
+        <div class="flip-grid">
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: що визначає AMI">
+            <span class="flip-card-inner">
+              <span class="flip-face"><span class="flip-kicker">Питання</span><span class="flip-term">Що визначає AMI?</span><span class="flip-hint">Натисніть для відповіді ↻</span></span>
+              <span class="flip-face flip-back"><span class="flip-kicker">Відповідь</span><span class="flip-term">Програмне середовище</span><span class="flip-hint">ОС + бінарні файли + налаштування. AMI ID є регіональним.</span></span>
+            </span>
+          </button>
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: сімейство чи розмір">
+            <span class="flip-card-inner">
+              <span class="flip-face"><span class="flip-kicker">Розшифруйте</span><span class="flip-term"><span class="accent">t2</span>.micro</span><span class="flip-hint">Що тут сімейство, а що — розмір?</span></span>
+              <span class="flip-face flip-back"><span class="flip-kicker">Відповідь</span><span class="flip-term"><span class="accent">t2</span> = сімейство<br><span class="cyan">micro</span> = розмір</span><span class="flip-hint">Розмір задає vCPU, RAM і вартість.</span></span>
+            </span>
+          </button>
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: що означає shared tenancy">
+            <span class="flip-card-inner">
+              <span class="flip-face"><span class="flip-kicker">Модель</span><span class="flip-term">Що означає shared tenancy?</span><span class="flip-hint">Натисніть для відповіді ↻</span></span>
+              <span class="flip-face flip-back"><span class="flip-kicker">Відповідь</span><span class="flip-term">Кілька VM ділять фізичний хост</span><span class="flip-hint">Ізоляцію забезпечує гіпервізор.</span></span>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section class="slide" data-kind="learn" aria-labelledby="s3-title">
+        <p class="eyebrow">03 · Обчислення і дані</p>
+        <h2 id="s3-title">Сімейство вибирають за <span class="accent">вузьким місцем</span></h2>
+        <div class="split">
+          <article class="panel orange-edge">
+            <div class="family-list">
+              <div class="family-row"><span class="family-letter">T/M</span><span class="family-name">General Purpose</span><span class="family-use">Баланс CPU, RAM і мережі · вебсервери</span></div>
+              <div class="family-row"><span class="family-letter">C</span><span class="family-name">Compute Optimized</span><span class="family-use">Потужний CPU · HPC, batch, ігрові сервери</span></div>
+              <div class="family-row"><span class="family-letter">R</span><span class="family-name">Memory Optimized</span><span class="family-use">Багато RAM · кеші, бази даних, real-time analytics</span></div>
+              <div class="family-row"><span class="family-letter">P</span><span class="family-name">Accelerated</span><span class="family-use">GPU / прискорювачі · ML, deep learning, 3D</span></div>
+              <div class="family-row"><span class="family-letter">I</span><span class="family-name">Storage Optimized</span><span class="family-use">Швидкий локальний I/O · NoSQL, data warehouse</span></div>
+            </div>
+          </article>
+          <article class="panel cyan-edge">
+            <span class="step-no">Amazon EBS</span>
+            <h3 style="font-size:1.5rem; margin-top:8px;">Persistent block storage</h3>
+            <div class="storage-stack">
+              <div class="storage-fact"><span>GP2 / GP3</span><p>Збалансовані SSD-томи загального призначення.</p></div>
+              <div class="storage-fact"><span>Snapshots</span><p>Інкрементні резервні копії стану тому.</p></div>
+              <div class="storage-fact"><span>Encryption</span><p>Шифрування за допомогою AWS KMS.</p></div>
+            </div>
+          </article>
+        </div>
+        <div class="memory-line"><strong>Екзаменаційний хід:</strong> спочатку знайдіть домінуючу вимогу — CPU, RAM, GPU чи I/O.</div>
+      </section>
+
+      <section class="slide" data-kind="check" aria-labelledby="s4-title">
+        <p class="eyebrow">04 · Перевірка · Questions_4.md</p>
+        <h2 id="s4-title">Оберіть ресурс і <span class="cyan">помітьте сигнал</span></h2>
+        <div class="quiz-shell" data-quiz>
+          <article class="panel quiz-card">
+            <div class="quiz-questions">
+              <section class="quiz-question active" data-question="compute-use">
+                <div class="question-title">What is an appropriate use case for compute-optimized EC2 instances?</div>
+                <div class="answers">
+                  <button class="answer" type="button">For applications requiring minimal computational resources</button>
+                  <button class="answer" type="button" data-correct="true">For high-performance computing and batch processing workloads</button>
+                  <button class="answer" type="button">For data warehousing solutions</button>
+                  <button class="answer" type="button">For high availability web servers</button>
+                </div>
+                <p class="feedback"><strong>C-family</strong> надає потужні CPU для обчислювально інтенсивних задач.</p>
+              </section>
+              <section class="quiz-question" data-question="cost-characteristic">
+                <div class="question-title">Which is not a common cost characteristic for EC2 except for spot pricing?</div>
+                <div class="answers">
+                  <button class="answer" type="button">Clock hours</button>
+                  <button class="answer" type="button">Detailed monitoring</button>
+                  <button class="answer" type="button" data-correct="true">AZ location</button>
+                  <button class="answer" type="button">Hardware options</button>
+                </div>
+                <p class="feedback"><strong>AZ location</strong> не є типовою окремою характеристикою ціни EC2; на вартість впливають час, конфігурація та додаткові опції.</p>
+              </section>
+              <section class="quiz-question" data-question="cloud-charge">
+                <div class="question-title">What model is often followed in order to charge for cloud usage?</div>
+                <div class="answers">
+                  <button class="answer" type="button">Pay-as-you-terminate</button>
+                  <button class="answer" type="button" data-correct="true">Pay-as-you-go</button>
+                  <button class="answer" type="button">Pay-as-you-can</button>
+                  <button class="answer" type="button">Pay-as-you-will</button>
+                </div>
+                <p class="feedback"><strong>Pay-as-you-go</strong> — оплата фактично спожитих хмарних ресурсів.</p>
+              </section>
+            </div>
+            <div class="quiz-footer">
+              <span class="quiz-position" aria-live="polite">1 / 3</span>
+              <div class="quiz-nav">
+                <button class="mini-button quiz-prev" type="button" disabled>← Попереднє</button>
+                <button class="mini-button quiz-next" type="button">Наступне →</button>
+              </div>
+            </div>
+          </article>
+          <aside class="quiz-rail" aria-hidden="true"><span class="rail-number">3</span><span class="rail-label">питання у цьому блоці</span></aside>
+        </div>
+      </section>
+
+      <section class="slide" data-kind="learn" aria-labelledby="s5-title">
+        <p class="eyebrow">05 · Доступ, захист і стани</p>
+        <h2 id="s5-title">Key Pair відкриває вхід. Security Group <span class="accent">контролює трафік</span></h2>
+        <div class="security-layout">
+          <article class="panel orange-edge access-flow">
+            <div class="access-item"><strong>Key Pair</strong><p>Public key — на сервері; private key <code>.pem</code> — тільки у вас. Для SSH: <code>chmod 400</code>.</p></div>
+            <div class="access-item"><strong>Security Group</strong><p>Stateful-фаєрвол інстансу: тільки Allow-правила, inbound за замовчуванням заборонений.</p></div>
+            <div class="access-item"><strong>SSM Session Manager</strong><p>Безпечніша альтернатива: без відкритого порту 22 і без локального key file.</p></div>
+          </article>
+          <article class="panel cyan-edge">
+            <span class="step-no">Життєвий цикл EC2</span>
+            <div class="lifecycle">
+              <div class="state"><strong>Start</strong><small>Запуск обчислень; після stop буде новий public IP.</small></div>
+              <div class="state"><strong>Stop</strong><small>Тимчасово вимикає VM; EBS зберігається.</small></div>
+              <div class="state"><strong>Reboot</strong><small>Перезавантаження ОС; поточний public IP не змінюється.</small></div>
+              <div class="state danger"><strong>Terminate</strong><small>Безповоротне видалення; root EBS за замовчуванням теж.</small></div>
+            </div>
+            <div class="memory-line"><strong>Постійна IP-адреса?</strong> Прив’яжіть <strong>Elastic IP</strong>.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-kind="check" aria-labelledby="s6-title">
+        <p class="eyebrow">06 · Перевірка · Flip-cards</p>
+        <h2 id="s6-title">Що станеться з доступом і <span class="cyan">станом сервера?</span></h2>
+        <p class="lead">Спрогнозуйте результат для кожного сценарію.</p>
+        <div class="flip-grid four">
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: Stop і Start">
+            <span class="flip-card-inner"><span class="flip-face"><span class="flip-kicker">Сценарій</span><span class="flip-term">Stop → Start</span><span class="flip-hint">Що з public IP?</span></span><span class="flip-face flip-back"><span class="flip-kicker">Результат</span><span class="flip-term">Зміниться</span><span class="flip-hint">Для статичної адреси потрібен Elastic IP.</span></span></span>
+          </button>
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: Reboot">
+            <span class="flip-card-inner"><span class="flip-face"><span class="flip-kicker">Сценарій</span><span class="flip-term">Reboot</span><span class="flip-hint">Що з public IP?</span></span><span class="flip-face flip-back"><span class="flip-kicker">Результат</span><span class="flip-term">Не зміниться</span><span class="flip-hint">Це звичайне перезавантаження ОС.</span></span></span>
+          </button>
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: дозволений inbound трафік">
+            <span class="flip-card-inner"><span class="flip-face"><span class="flip-kicker">Security Group</span><span class="flip-term">Дозволено inbound-запит</span><span class="flip-hint">Що з відповіддю?</span></span><span class="flip-face flip-back"><span class="flip-kicker">Stateful</span><span class="flip-term">Відповідь вийде автоматично</span><span class="flip-hint">Окреме outbound-правило для response не потрібне.</span></span></span>
+          </button>
+          <button class="flip-card" type="button" aria-pressed="false" aria-label="Перевернути картку: заблокувати окрему IP адресу">
+            <span class="flip-card-inner"><span class="flip-face"><span class="flip-kicker">Потреба</span><span class="flip-term">Заблокувати окрему IP-адресу</span><span class="flip-hint">Security Group?</span></span><span class="flip-face flip-back"><span class="flip-kicker">Відповідь</span><span class="flip-term">Ні — потрібен NACL</span><span class="flip-hint">Security Group не має Deny-правил.</span></span></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="slide" data-kind="learn" aria-labelledby="s7-title">
+        <p class="eyebrow">07 · Моделі оплати</p>
+        <h2 id="s7-title">Ціна залежить від того, <span class="accent">що ви готові пообіцяти</span></h2>
+        <div class="split">
+          <article class="panel orange-edge decision-tree">
+            <div class="decision-row"><span class="decision-question">Короткостроково й непередбачувано?</span><span class="decision-arrow">→</span><span class="decision-answer">On-Demand</span></div>
+            <div class="decision-row"><span class="decision-question">Стабільно на 1 або 3 роки?</span><span class="decision-arrow">→</span><span class="decision-answer">Reserved Instance</span></div>
+            <div class="decision-row"><span class="decision-question">Зобов’язання витрачати $/hour, але потрібна гнучкість?</span><span class="decision-arrow">→</span><span class="decision-answer">Savings Plans</span></div>
+            <div class="decision-row"><span class="decision-question">Можна перервати за 2 хвилини?</span><span class="decision-arrow">→</span><span class="decision-answer">Spot</span></div>
+            <div class="decision-row"><span class="decision-question">BYOL чи вимоги до фізичного хоста?</span><span class="decision-arrow">→</span><span class="decision-answer">Dedicated Host</span></div>
+          </article>
+          <article class="panel cyan-edge">
+            <span class="step-no">Максимальні знижки за матеріалом</span>
+            <div class="discounts">
+              <div class="discount"><strong>до 75%</strong>Reserved</div>
+              <div class="discount"><strong>до 72%</strong>Savings Plans</div>
+              <div class="discount"><strong>до 90%</strong>Spot</div>
+            </div>
+            <div class="memory-line"><strong>Найдешевше ≠ найкраще.</strong> Spot вимагає, щоб workload переносив переривання.</div>
+            <p style="margin-top:14px;"><strong>Regional RI:</strong> гнучкіша знижка без гарантії capacity.<br><strong>Zonal RI:</strong> прив’язка до AZ і capacity reservation.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="slide" data-kind="check" aria-labelledby="s8-title">
+        <p class="eyebrow">08 · Фінальна перевірка · Questions_4.md</p>
+        <h2 id="s8-title">Чи впізнаєте модель оплати <span class="accent">за сценарієм?</span></h2>
+        <div class="quiz-shell" data-quiz>
+          <article class="panel quiz-card">
+            <div class="quiz-questions">
+              <section class="quiz-question active" data-question="savings-advantage">
+                <div class="question-title">What is the primary advantage of using Savings Plans in comparison to Reserved Instances?</div>
+                <div class="answers">
+                  <button class="answer" type="button">Savings Plans offer more flexibility in modifying instance types.</button>
+                  <button class="answer" type="button">Savings Plans provide a higher level of capacity reservations.</button>
+                  <button class="answer" type="button" data-correct="true">Savings Plans automatically adjust to usage changes without the need for specific instance types or Regions.</button>
+                  <button class="answer" type="button">Savings Plans have a fixed, predictable pricing model.</button>
+                </div>
+                <p class="feedback"><strong>Savings Plans</strong> прив’язують знижку до зобов’язання витрат, а не до окремого інстансу.</p>
+              </section>
+              <section class="quiz-question" data-question="spot-bid">
+                <div class="question-title">What EC2 pricing model allows you to bid on availability capacity?</div>
+                <div class="answers">
+                  <button class="answer" type="button">Temporary instances</button>
+                  <button class="answer" type="button" data-correct="true">Spot instances</button>
+                  <button class="answer" type="button">Reserved instances</button>
+                  <button class="answer" type="button">On-demand instances</button>
+                </div>
+                <p class="feedback"><strong>Spot Instances</strong> використовують вільні обчислювальні потужності AWS зі знижкою та ризиком переривання.</p>
+              </section>
+              <section class="quiz-question" data-question="steady-workload">
+                <div class="question-title">You know you will need five EC2 servers for your application. The workloads will be steady and predictable. To save on costs, what pricing model should you consider?</div>
+                <div class="answers">
+                  <button class="answer" type="button">Variable</button>
+                  <button class="answer" type="button" data-correct="true">Reserved</button>
+                  <button class="answer" type="button">On demand</button>
+                  <button class="answer" type="button">Spot</button>
+                </div>
+                <p class="feedback"><strong>Reserved Instances</strong> підходять для сталого й передбачуваного навантаження на 1 або 3 роки.</p>
+              </section>
+              <section class="quiz-question" data-question="greatest-savings">
+                <div class="question-title">What instance type offers the greatest possible cost savings?</div>
+                <div class="answers">
+                  <button class="answer" type="button">On demand</button>
+                  <button class="answer" type="button">Reserved</button>
+                  <button class="answer" type="button" data-correct="true">Spot</button>
+                  <button class="answer" type="button">Dedicated</button>
+                </div>
+                <p class="feedback"><strong>Spot</strong> дає найбільшу можливу знижку — до 90% порівняно з On-Demand.</p>
+              </section>
+            </div>
+            <div class="quiz-footer">
+              <span class="quiz-position" aria-live="polite">1 / 4</span>
+              <div class="quiz-nav">
+                <button class="mini-button quiz-prev" type="button" disabled>← Попереднє</button>
+                <button class="mini-button quiz-next" type="button">Наступне →</button>
+              </div>
+            </div>
+          </article>
+          <aside class="quiz-rail" aria-hidden="true"><span class="rail-number">4</span><span class="rail-label">питання у цьому блоці</span></aside>
+        </div>
+        <div class="scoreboard" aria-live="polite">
+          <span class="score-value">Результат: <span id="score">0</span> / 7 · Відповіді: <span id="answered">0</span> / 7</span>
+          <button class="reset-button" type="button">Спробувати ще раз</button>
+        </div>
+      </section>
+    </div>
+
+    <nav class="controls" aria-label="Навігація презентацією">
+      <button class="nav-button prev" type="button" disabled aria-label="Попередній слайд">← Назад</button>
+      <button class="fullscreen" type="button" title="На весь екран" aria-label="Увімкнути повноекранний режим">⛶</button>
+      <button class="nav-button next" type="button" aria-label="Наступний слайд">Далі →</button>
+    </nav>
+    <div class="keyboard-hint">← → навігація · F повний екран</div>
+  </main>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      const progress = document.querySelector('.progress-fill');
+      const count = document.querySelector('.slide-count');
+      const prev = document.querySelector('.prev');
+      const next = document.querySelector('.next');
+      const fullscreen = document.querySelector('.fullscreen');
+      const scoreNode = document.getElementById('score');
+      const answeredNode = document.getElementById('answered');
+      const reset = document.querySelector('.reset-button');
+      let current = 0;
+      let score = 0;
+      let answered = 0;
+
+      function showSlide(index) {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === current);
+          slide.setAttribute('aria-hidden', String(i !== current));
+        });
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        prev.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+        next.textContent = current === slides.length - 2 ? 'Фінал →' : 'Далі →';
+        slides[current].scrollTop = 0;
+      }
+
+      function updateScore() {
+        scoreNode.textContent = score;
+        answeredNode.textContent = answered;
+      }
+
+      document.querySelectorAll('.flip-card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const flipped = card.classList.toggle('flipped');
+          card.setAttribute('aria-pressed', String(flipped));
+        });
+      });
+
+      document.querySelectorAll('.quiz-question').forEach((question) => {
+        const answers = [...question.querySelectorAll('.answer')];
+        const feedback = question.querySelector('.feedback');
+        answers.forEach((answer) => {
+          answer.addEventListener('click', () => {
+            if (question.dataset.answered === 'true') return;
+            question.dataset.answered = 'true';
+            const isCorrect = answer.dataset.correct === 'true';
+            answer.classList.add(isCorrect ? 'correct' : 'wrong');
+            answers.find((item) => item.dataset.correct === 'true').classList.add('correct');
+            answers.forEach((item) => { item.disabled = true; });
+            feedback.classList.add('show');
+            feedback.insertAdjacentHTML('afterbegin', isCorrect ? '<strong>Правильно.</strong> ' : '<strong>Не зовсім.</strong> ');
+            answered += 1;
+            if (isCorrect) score += 1;
+            updateScore();
+          });
+        });
+      });
+
+      document.querySelectorAll('[data-quiz]').forEach((quiz) => {
+        const questions = [...quiz.querySelectorAll('.quiz-question')];
+        const position = quiz.querySelector('.quiz-position');
+        const quizPrev = quiz.querySelector('.quiz-prev');
+        const quizNext = quiz.querySelector('.quiz-next');
+        let quizIndex = 0;
+
+        function showQuestion(index) {
+          quizIndex = Math.max(0, Math.min(questions.length - 1, index));
+          questions.forEach((question, i) => question.classList.toggle('active', i === quizIndex));
+          position.textContent = `${quizIndex + 1} / ${questions.length}`;
+          quizPrev.disabled = quizIndex === 0;
+          quizNext.disabled = quizIndex === questions.length - 1;
+          quizNext.textContent = quizIndex === questions.length - 2 ? 'Останнє →' : 'Наступне →';
+        }
+
+        quizPrev.addEventListener('click', () => showQuestion(quizIndex - 1));
+        quizNext.addEventListener('click', () => showQuestion(quizIndex + 1));
+        showQuestion(0);
+      });
+
+      function resetQuiz() {
+        score = 0;
+        answered = 0;
+        document.querySelectorAll('.quiz-question').forEach((question) => {
+          delete question.dataset.answered;
+          question.querySelectorAll('.answer').forEach((answer) => {
+            answer.disabled = false;
+            answer.classList.remove('correct', 'wrong');
+          });
+          const feedback = question.querySelector('.feedback');
+          feedback.classList.remove('show');
+          feedback.innerHTML = feedback.innerHTML.replace(/^<strong>(Правильно\.|Не зовсім\.)<\/strong>\s*/, '');
+        });
+        document.querySelectorAll('.flip-card').forEach((card) => {
+          card.classList.remove('flipped');
+          card.setAttribute('aria-pressed', 'false');
+        });
+        updateScore();
+      }
+
+      prev.addEventListener('click', () => showSlide(current - 1));
+      next.addEventListener('click', () => showSlide(current + 1));
+      reset.addEventListener('click', resetQuiz);
+      fullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+        else document.exitFullscreen?.();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        const tag = event.target.tagName;
+        if (tag === 'BUTTON' && (event.key === 'Enter' || event.key === ' ')) return;
+        if (event.key === 'ArrowRight' || event.key === 'PageDown') showSlide(current + 1);
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') showSlide(current - 1);
+        if (event.key.toLowerCase() === 'f') fullscreen.click();
+      });
+
+      showSlide(0);
+      updateScore();
+    })();
+  </script>
+</body>
+</html>
