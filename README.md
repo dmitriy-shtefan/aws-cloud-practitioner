@@ -14,15 +14,16 @@
 
 * Основи Cloud Computing та AWS
 * AWS Global Infrastructure
-* EC2 та обчислювальні сервіси
-* S3 та зберігання даних
-* RDS та DynamoDB
-* IAM та основи Cloud Security
-* VPC та Networking
-* Lambda та Serverless
-* Monitoring та CloudWatch
-* Pricing, Billing та Support
-* AWS Well-Architected Framework
+* **Getting Started with Storage**: S3 та зберігання даних
+* **Getting Started with Compute**: EC2 та обчислювальні сервіси
+* **Getting Started with Networking**: VPC та доставка контенту
+* **Getting Started with Databases**: RDS, Aurora та DynamoDB
+* **Getting Started with Cloud Operations**: CloudWatch, CloudTrail та AWS Config
+* **Getting Started with Security**: Shared Responsibility, IAM та захист даних
+* **Getting Started with Serverless**: Lambda та інтеграція застосунків
+* AWS Well-Architected Framework, Pricing, Billing, Support та підсумкова підготовка до CLF-C02
+
+Детальний зміст 10 занять наведено у [програмі курсу](Програма_курсу.md).
 
 ## Очікуваний Результат
 
